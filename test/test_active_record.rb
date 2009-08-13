@@ -27,6 +27,19 @@ class TestActiveRecord < Test::Unit::TestCase
         Loofah.expects(:scrub_fragment).with(PLAIN_TEXT, :prune).never
         @post.save
       end
+
+      context "and the field hasn't changed" do
+        setup do
+          @post.save
+        end
+
+        should "not scrub the specified field" do
+          Loofah.expects(:scrub_fragment).never
+          Loofah.expects(:scrub_fragment).never
+          @post.save
+        end
+
+      end
     end
 
     context "scrubbing field as a document" do
@@ -39,6 +52,19 @@ class TestActiveRecord < Test::Unit::TestCase
         Loofah.expects(:scrub_document).with(HTML_STRING, :strip).once
         Loofah.expects(:scrub_document).with(PLAIN_TEXT, :strip).never
         @post.save
+      end
+
+      context "and the field hasn't changed" do
+        setup do
+          @post.save
+        end
+
+        should "not scrub the specified field" do
+          Loofah.expects(:scrub_document).with(HTML_STRING, :strip).never
+          Loofah.expects(:scrub_document).with(PLAIN_TEXT, :strip).never
+          @post.save
+        end
+
       end
     end
 
