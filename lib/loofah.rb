@@ -86,12 +86,16 @@ if Nokogiri::VERSION < Loofah::REQUIRED_NOKOGIRI_VERSION
   raise RuntimeError, "Loofah requires Nokogiri #{Loofah::REQUIRED_NOKOGIRI_VERSION} or later (currently #{Nokogiri::VERSION})"
 end
 
-if defined? Rails.configuration and Rails.configuration.frameworks.include?([:active_record]) # rails 2.1 and later
-  Rails.configuration.after_initialize do
+if Rails::VERSION::MAJOR == 2
+  if defined? Rails.configuration and Rails.configuration.frameworks.include?([:active_record]) # rails 2.1 and later
+    Rails.configuration.after_initialize do
+      require 'loofah/active_record'
+      require 'loofah/xss_foliate'
+    end
+  elsif defined? ActiveRecord::Base # rails 2.0
     require 'loofah/active_record'
     require 'loofah/xss_foliate'
   end
-elsif defined? ActiveRecord::Base # rails 2.0
-  require 'loofah/active_record'
-  require 'loofah/xss_foliate'
+elsif Rails::VERSION::MAJOR == 3
+  require 'loofah/railtie'
 end
